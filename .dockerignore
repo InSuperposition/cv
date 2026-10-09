@@ -1,0 +1,11 @@
+.git
+.agents
+node_modules
+Dockerfile
+.dockerignore
+*.md
+.env*
+tmp
+db
+.DS_Store
+hmr.ts
