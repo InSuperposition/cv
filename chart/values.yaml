@@ -1,0 +1,5 @@
+image:
+  repository: ghcr.io/insuperposition/cv
+  # Required, no default: the image is pinned by digest, never by tag.
+  digest: ""
+port: 44100
