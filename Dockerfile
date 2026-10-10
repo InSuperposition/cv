@@ -3,7 +3,7 @@
 ARG NODE_VERSION=24
 ARG DEBIAN_RELEASE=trixie
 
-FROM node:${NODE_VERSION}-${DEBIAN_RELEASE}-slim AS deps
+FROM public.ecr.aws/docker/library/node:${NODE_VERSION}-${DEBIAN_RELEASE}-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
