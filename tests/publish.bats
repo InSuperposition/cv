@@ -61,3 +61,28 @@ STUB
   run grep -q cosign "$calls"
   [ "$status" -ne 0 ]
 }
+
+@test "the unsigned fixture is packaged as cv-unsigned, pushed and never signed" {
+  cat >"$stubs/helm" <<'STUB'
+#!/usr/bin/env bash
+echo "helm $*" >>"$calls"
+case "$1" in
+  package)
+    grep -qx 'name: cv-unsigned' "$2/Chart.yaml" || exit 1
+    touch "${@: -1}/cv-unsigned-${4}.tgz" ;;
+  push) printf 'Pushed: %s/cv-unsigned:0.0.1\nDigest: sha256:%s\n' "${3#oci://}" "$(printf 'd%.0s' {1..64})" ;;
+esac
+STUB
+  run "$root/scripts/publish-unsigned-fixture.sh" 0.0.1 ghcr.io/Owner/charts
+  [ "$status" -eq 0 ]
+  grep -q "helm package .*cv-unsigned --version 0.0.1" "$calls"
+  grep -q "helm push .*cv-unsigned-0.0.1.tgz oci://ghcr.io/owner/charts" "$calls"
+  [[ "$output" == *"chart-digest=sha256:$(printf 'd%.0s' {1..64})"* ]]
+  run grep -q cosign "$calls"
+  [ "$status" -ne 0 ]
+}
+
+@test "the unsigned fixture leaves the real chart named cv" {
+  run "$root/scripts/publish-unsigned-fixture.sh" 0.0.1 ghcr.io/owner/charts
+  grep -qx 'name: cv' "$root/chart/Chart.yaml"
+}
