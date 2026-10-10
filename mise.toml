@@ -8,7 +8,7 @@ shfmt = "3.14.1"
 [tasks.lint]
 description = "Lint the workflow, the shell scripts and the chart"
 run = [
-  "actionlint .github/workflows/publish.yaml",
+  "actionlint .github/workflows/*.yaml",
   "shellcheck scripts/*.sh tests/*.bats",
   "shfmt -i 2 -d scripts tests",
   "helm lint chart --set image.digest=sha256:0000000000000000000000000000000000000000000000000000000000000000",
